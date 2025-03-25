@@ -1,0 +1,46 @@
+# Dependencias
+/node_modules
+/.pnp
+.pnp.js
+
+# Archivos de entorno
+.env*.local
+.env
+
+# Archivos de producción
+/.next
+/out
+
+# Archivos del sistema
+.DS_Store
+*.pem
+
+# Archivos de depuración
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# Archivos de IDE y editor
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Archivos de testing
+/coverage
+
+# Archivos de caché
+.next/cache
+
+# Archivos de configuración local
+.next/**
+
+# Archivos de desarrollo local
+*.local
+
+# Archivos de vercel
+.vercel
