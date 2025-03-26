@@ -9,7 +9,7 @@ import WhatsAppButton from "@/components/whatsapp-button"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "Concesionario de Autos y Embarcaciones",
+  title: "Gestoría Náutica y del Automotor",
   description: "Vende o compra tu próximo vehículo",
     generator: 'v0.dev'
 }
