@@ -36,7 +36,7 @@ export default function ServicesSection() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="py-20 bg-gray-50">
+    <section ref={sectionRef} className="py-20 bg-gray-50" id="servicios">
       <div className="container mx-auto px-4">
         <h2 className="text-3xl font-bold text-[#0F1A3D] text-center mb-12 fade-in">Nuestros Servicios</h2>
 
