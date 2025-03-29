@@ -8,7 +8,7 @@ export default function Contacto() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <div className="w-full h-[400px] rounded-lg overflow-hidden">
           <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3283.8861960474366!2d-58.38414532346177!3d-34.60373445749046!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95bccac630121623%3A0x53386f2ac88991a9!2sAv.%209%20de%20Julio%2C%20Buenos%20Aires%2C%20Argentina!5e0!3m2!1sen!2sus!4v1711300000000!5m2!1sen!2sus"
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d27114.79180508327!2d-58.25910022050809!3d-32.48261549999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x95afdb015f5c1837%3A0xec723167e2eacdbc!2sConcepcIon%20del%20Uruguay%2C%20Entre%20Rios%2C%20Argentina!5e0!3m2!1sen!2sus!4v1711742878392!5m2!1sen!2sus" width="600" height="450" style="border:0;"  loading="lazy" referrerpolicy="no-referrer-when-downgrade"
             width="100%"
             height="100%"
             style={{ border: 0 }}
