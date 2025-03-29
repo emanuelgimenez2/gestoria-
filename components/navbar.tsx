@@ -56,9 +56,9 @@ export default function Navbar() {
     <>
       <header className={`bg-white sticky top-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-md py-2' : 'shadow-sm py-4'}`}>
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-20">
+          <div className="flex items-center justify-between h-30">
             <Link href="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-              <div className="relative h-16 w-16">
+              <div className="relative h-20 w-20">
                 <Image
                   src="/logo2.png"
                   alt="Logo Gestoría"
