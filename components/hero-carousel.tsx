@@ -10,19 +10,19 @@ const slides = [
   {
     id: 1,
     image: "/lancha1.jpg", // Reemplaza con el nombre real de tu primera imagen
-    title: "Vende o compra tu próximo vehículo",
-    subtitle: "La mejor selección de autos y embarcaciones",
+    title: "Publique Aqui su Embarcacion",
+    subtitle: "La mejor selección de embarcaciones",
   },
   {
     id: 2,
     image: "/lancha2.jpg", // Reemplaza con el nombre real de tu segunda imagen
-    title: "Embarcaciones de lujo",
-    subtitle: "Descubre nuestra colección exclusiva",
+    title: "Embarcaciones Deportivas",
+    subtitle: "Descubre nuestra colección",
   },
   {
     id: 3,
     image: "/lancha3.webp", // Reemplaza con el nombre real de tu tercera imagen
-    title: "Vehículos premium",
+    title: "Vehículos y Motos",
     subtitle: "Calidad y confort garantizados",
   },
 ]

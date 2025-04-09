@@ -49,29 +49,29 @@ export default function ServicesSection() {
                 </div>
                 <CardTitle>Automotor</CardTitle>
               </div>
-              <CardDescription>Servicios especializados para vehículos terrestres</CardDescription>
+              <CardDescription>Mandatario Nacional Matriculado </CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-[#6B7280]">
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Compra y venta de vehículos nuevos y usados
+                 Inscripcion inicial
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Financiación personalizada
+                  Transferencia 
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Tasación gratuita
+                  Cambio motor y radicacion 
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Gestión de trámites y transferencias
+                  Duplicados
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Asesoramiento técnico especializado
+                  Asesoramiento
                 </li>
               </ul>
             </CardContent>
@@ -85,29 +85,29 @@ export default function ServicesSection() {
                 </div>
                 <CardTitle>Náutica</CardTitle>
               </div>
-              <CardDescription>Servicios especializados para embarcaciones</CardDescription>
+              <CardDescription>Embarcaciones Rey y jurisdiccionales</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-[#6B7280]">
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Compra y venta de embarcaciones nuevas y usadas
+                  Inscripciones
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Financiación a medida
+                  Transferencias
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Tasación profesional
+                  Cambio de nombre y motor
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Gestión de documentación marítima
+                 Instalacion y retiro de motor 
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Asesoramiento técnico especializado
+                  Asesoramiento técnico 
                 </li>
               </ul>
             </CardContent>

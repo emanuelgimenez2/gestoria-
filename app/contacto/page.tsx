@@ -26,7 +26,7 @@ export default function Contacto() {
               <Phone className="h-6 w-6 text-[#0F1A3D] mt-1" />
               <div>
                 <h3 className="font-semibold text-[#0F1A3D]">Teléfono</h3>
-                <p className="text-gray-600">+54 11 1234-5678</p>
+                <p className="text-gray-600">03442-472412</p>
               </div>
             </div>
 
