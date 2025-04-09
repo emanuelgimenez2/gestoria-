@@ -34,7 +34,7 @@ export default function Contacto() {
               <MapPin className="h-6 w-6 text-[#0F1A3D] mt-1" />
               <div>
                 <h3 className="font-semibold text-[#0F1A3D]">Dirección</h3>
-                <p className="text-gray-600">Av. 9 de Julio 1234, CABA, Argentina</p>
+                <p className="text-gray-600">Concepcion del Uuruguay, Entre Rios, Argentina</p>
               </div>
             </div>
 

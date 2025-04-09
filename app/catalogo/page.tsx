@@ -1,74 +1,49 @@
 "use client"
-
-import { useState } from "react"
-import { Search } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { Search, Plus, Upload, X } from "lucide-react"
 import ProductGrid from "@/components/product-grid"
 import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
+import { doc, setDoc, getDoc, collection, addDoc, getDocs, serverTimestamp } from "firebase/firestore"
+import { db, app } from "@/lib/firebase"
 
-// Datos de ejemplo
-const products = [
-  {
-    id: 1,
-    model: "Yacht 320",
-    year: 2022,
-    price: 320000,
-    category: "nautica",
-    images: [
-      "/placeholder.svg?height=300&width=500",
-      "/placeholder.svg?height=300&width=500",
-      "/placeholder.svg?height=300&width=500",
-    ],
-    description: "Lujoso yate con 3 camarotes, cocina completa y sala de estar.",
-    sold: false,
-  },
-  {
-    id: 2,
-    model: "SUV Premium",
-    year: 2023,
-    price: 45000,
-    category: "automotor",
-    images: [
-      "/placeholder.svg?height=300&width=500",
-      "/placeholder.svg?height=300&width=500",
-      "/placeholder.svg?height=300&width=500",
-    ],
-    description: "SUV de lujo con interior en cuero, techo panorámico y sistema de navegación avanzado.",
-    sold: true,
-  },
-  {
-    id: 3,
-    model: "Lancha Deportiva",
-    year: 2021,
-    price: 85000,
-    category: "nautica",
-    images: [
-      "/placeholder.svg?height=300&width=500",
-      "/placeholder.svg?height=300&width=500",
-      "/placeholder.svg?height=300&width=500",
-    ],
-    description: "Lancha deportiva con motor de alta potencia, ideal para deportes acuáticos.",
-    sold: false,
-  },
-  {
-    id: 4,
-    model: "Sedan Ejecutivo",
-    year: 2022,
-    price: 38000,
-    category: "automotor",
-    images: [
-      "/placeholder.svg?height=300&width=500",
-      "/placeholder.svg?height=300&width=500",
-      "/placeholder.svg?height=300&width=500",
-    ],
-    description: "Sedan ejecutivo con acabados de lujo y tecnología de punta.",
-    sold: false,
-  },
-]
+const storage = getStorage(app)
 
 export default function Catalogo() {
   const [searchTerm, setSearchTerm] = useState("")
   const [category, setCategory] = useState("all")
+  const [products, setProducts] = useState<any[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const [newProduct, setNewProduct] = useState({
+    model: "",
+    year: "",
+    price: "",
+    category: "automotor",
+    description: "",
+    sold: false,
+  })
+  const [images, setImages] = useState<File[]>([])
+  const [isUploading, setIsUploading] = useState(false)
+
+  const fetchProducts = async () => {
+    setIsLoading(true)
+    try {
+      const querySnapshot = await getDocs(collection(db, "products"))
+      const productsData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      setProducts(productsData)
+    } catch (error) {
+      console.error("Error al obtener productos:", error.message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.model.toLowerCase().includes(searchTerm.toLowerCase())
@@ -76,10 +51,88 @@ export default function Catalogo() {
     return matchesSearch && matchesCategory
   })
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setNewProduct(prev => ({
+      ...prev,
+      [name]: name === "year" || name === "price" ? Number(value) : value
+    }))
+  }
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files)
+      setImages(files)
+    }
+  }
+
+  const removeImage = (index: number) => {
+    const newImages = [...images]
+    newImages.splice(index, 1)
+    setImages(newImages)
+  }
+
+  const saveProduct = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    if (images.length === 0) {
+      alert("Debes subir al menos una imagen")
+      return
+    }
+
+    setIsUploading(true)
+
+    try {
+      const imageUrls = await Promise.all(
+        images.map(async (file) => {
+          const storageRef = ref(storage, `products/${Date.now()}_${file.name}`)
+          await uploadBytes(storageRef, file)
+          return await getDownloadURL(storageRef)
+        })
+      )
+
+      const productData = {
+        ...newProduct,
+        images: imageUrls,
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
+        sold: false
+      }
+
+      await addDoc(collection(db, "products"), productData)
+
+      setNewProduct({
+        model: "",
+        year: "",
+        price: "",
+        category: "automotor",
+        description: "",
+        sold: false,
+      })
+      setImages([])
+
+      await fetchProducts()
+
+      alert("Producto guardado exitosamente!")
+    } catch (error) {
+      console.error("Error al guardar el producto:", error.message)
+      alert("Hubo un error al guardar el producto")
+    } finally {
+      setIsUploading(false)
+    }
+  }
+
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+
   return (
     <div className="container mx-auto py-12 px-4">
       <h1 className="text-3xl font-bold text-[#0F1A3D] mb-8">Nuestro Catálogo</h1>
 
+
+      {/* Filtros y búsqueda */}
       <div className="flex flex-col md:flex-row gap-4 mb-8">
         <div className="relative flex-1">
           <Input
@@ -104,8 +157,14 @@ export default function Catalogo() {
         </Select>
       </div>
 
-      <ProductGrid products={filteredProducts} />
+      {/* Lista de productos */}
+      {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <p>Cargando productos...</p>
+        </div>
+      ) : (
+        <ProductGrid products={filteredProducts} />
+      )}
     </div>
   )
 }
-
