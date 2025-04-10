@@ -244,7 +244,7 @@ export default function Admin() {
                 <div className="flex justify-end mb-4">
                   <Button 
                     onClick={handleNewProduct} 
-                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
+                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700" 
                   >
                     <Plus className="h-5 w-5" />
                     Nuevo Producto
