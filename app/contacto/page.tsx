@@ -26,7 +26,7 @@ export default function Contacto() {
               <Phone className="h-6 w-6 text-[#0F1A3D] mt-1" />
               <div>
                 <h3 className="font-semibold text-[#0F1A3D]">Teléfono</h3>
-                <p className="text-gray-600">03442-472412</p>
+                <p className="text-gray-600">3442-472412</p>
               </div>
             </div>
 
@@ -34,7 +34,7 @@ export default function Contacto() {
               <MapPin className="h-6 w-6 text-[#0F1A3D] mt-1" />
               <div>
                 <h3 className="font-semibold text-[#0F1A3D]">Dirección</h3>
-                <p className="text-gray-600">Concepcion del Uuruguay, Entre Rios, Argentina</p>
+                <p className="text-gray-600">Los Geranios N° 823, Concepcion del Uruguay, Entre Rios, Argentina</p>
               </div>
             </div>
 
