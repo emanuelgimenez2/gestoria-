@@ -55,7 +55,7 @@ export default function ServicesSection() {
               <ul className="space-y-2 text-[#6B7280]">
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                 Inscripcion inicial
+                  Inscripción inicial
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
@@ -63,7 +63,7 @@ export default function ServicesSection() {
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Cambio motor y radicacion 
+                  Cambio motor y radicación 
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
@@ -71,7 +71,7 @@ export default function ServicesSection() {
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                  Asesoramiento
+                  Asesoramiento técnico
                 </li>
               </ul>
             </CardContent>
@@ -85,7 +85,7 @@ export default function ServicesSection() {
                 </div>
                 <CardTitle>Náutica</CardTitle>
               </div>
-              <CardDescription>Embarcaciones Rey y jurisdiccionales</CardDescription>
+              <CardDescription>Embarcaciones Rey y Jurisdiccionales</CardDescription>
             </CardHeader>
             <CardContent>
               <ul className="space-y-2 text-[#6B7280]">
@@ -103,7 +103,7 @@ export default function ServicesSection() {
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
-                 Instalacion y retiro de motor 
+                  Inscripción y retiro de motor 
                 </li>
                 <li className="flex items-center gap-2">
                   <div className="h-1.5 w-1.5 rounded-full bg-[#0F1A3D]"></div>
