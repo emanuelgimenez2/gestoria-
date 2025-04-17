@@ -33,15 +33,20 @@ export default function ProductTable() {
     category: "",
     description: "",
     sold: false,
-    images: []
+    images: [],
+    currency: "ARS"
   })
 
   // Categorías disponibles (puedes obtenerlas de tu base de datos también)
   const categories = [
     "Nautica",
     "Automotor",
-    
   ]
+
+  // Función para obtener el símbolo de la moneda
+  const getCurrencySymbol = (currency) => {
+    return currency === "USD" ? "US$" : "$";
+  };
 
   // Obtener productos
   useEffect(() => {
@@ -79,7 +84,8 @@ export default function ProductTable() {
       category: product.category || "",
       description: product.description || "",
       sold: product.sold || false,
-      images: product.images || []
+      images: product.images || [],
+      currency: product.currency || "ARS"
     })
   }
 
@@ -96,7 +102,8 @@ export default function ProductTable() {
         category: formData.category,
         description: formData.description,
         sold: formData.sold,
-        images: formData.images
+        images: formData.images,
+        currency: formData.currency
       })
       
       // Actualizar estado local
@@ -109,7 +116,8 @@ export default function ProductTable() {
           category: formData.category,
           description: formData.description,
           sold: formData.sold,
-          images: formData.images
+          images: formData.images,
+          currency: formData.currency
         } : p
       ))
       
@@ -225,7 +233,10 @@ export default function ProductTable() {
                   </TableCell>
                   <TableCell className="font-medium">{product.model}</TableCell>
                   <TableCell>{product.year}</TableCell>
-                  <TableCell>${typeof product.price === 'number' ? product.price.toLocaleString() : product.price}</TableCell>
+                  <TableCell>
+                    {getCurrencySymbol(product.currency || "ARS")}
+                    {typeof product.price === 'number' ? product.price.toLocaleString() : product.price}
+                  </TableCell>
                   <TableCell>{product.category}</TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -284,7 +295,10 @@ export default function ProductTable() {
                 <div className="flex-1">
                   <h3 className="font-medium">{product.model}</h3>
                   <p className="text-sm text-gray-500">{product.category} • {product.year}</p>
-                  <p className="font-semibold">${typeof product.price === 'number' ? product.price.toLocaleString() : product.price}</p>
+                  <p className="font-semibold">
+                    {getCurrencySymbol(product.currency || "ARS")}
+                    {typeof product.price === 'number' ? product.price.toLocaleString() : product.price}
+                  </p>
                 </div>
                 <div className="flex items-center gap-1">
                   <span className={`text-xs ${product.sold ? "text-red-500" : "text-green-500"}`}>
@@ -369,15 +383,29 @@ export default function ProductTable() {
                     <Label htmlFor="price" className="sm:text-right">
                       Precio
                     </Label>
-                    <Input
-                      id="price"
-                      name="price"
-                      type="number"
-                      value={formData.price}
-                      onChange={handleChange}
-                      className="sm:col-span-3"
-                      placeholder="Precio en dólares"
-                    />
+                    <div className="sm:col-span-3 flex gap-2">
+                      <Input
+                        id="price"
+                        name="price"
+                        type="number"
+                        value={formData.price}
+                        onChange={handleChange}
+                        className="flex-1"
+                        placeholder="Precio"
+                      />
+                      <Select
+                        value={formData.currency}
+                        onValueChange={(value) => setFormData({...formData, currency: value})}
+                      >
+                        <SelectTrigger className="w-24">
+                          <SelectValue placeholder="Moneda" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ARS">ARS</SelectItem>
+                          <SelectItem value="USD">USD</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
                 

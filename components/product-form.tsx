@@ -16,7 +16,8 @@ export default function ProductForm({ product, onSave, onCancel }) {
     id: null,
     model: "",
     year: new Date().getFullYear(),
-    price: 0,
+    price: "",  // Cambiado a string vacío para evitar el cero inicial
+    currency: "ARS",
     category: "automotor",
     images: [],
     description: "",
@@ -32,13 +33,20 @@ export default function ProductForm({ product, onSave, onCancel }) {
 
   useEffect(() => {
     if (product) {
-      setFormData(product);
+      // Si el producto existe pero no tiene moneda definida, asignar ARS por defecto
+      setFormData({
+        ...product,
+        currency: product.currency || "ARS",
+        // Convertir precio a string si existe para la edición
+        price: product.price ? String(product.price) : ""
+      });
     } else {
       setFormData({
         id: null,
         model: "",
         year: new Date().getFullYear(),
-        price: 0,
+        price: "",
+        currency: "ARS",
         category: "automotor",
         images: [],
         description: "",
@@ -54,7 +62,15 @@ export default function ProductForm({ product, onSave, onCancel }) {
 
   const handleNumberChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: Number(value) }));
+    
+    // Para el precio, guardamos el valor como string sin ceros iniciales innecesarios
+    if (name === "price") {
+      // Eliminar ceros iniciales excepto si es solo "0"
+      const cleanedValue = value === "0" ? "0" : value.replace(/^0+/, '');
+      setFormData((prev) => ({ ...prev, [name]: cleanedValue }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: Number(value) }));
+    }
   };
 
   const handleSelectChange = (name, value) => {
@@ -268,12 +284,15 @@ export default function ProductForm({ product, onSave, onCancel }) {
         throw new Error("El modelo es requerido");
       }
       
-      if (formData.price <= 0) {
-        throw new Error("El precio debe ser mayor a cero");
+      // Convertir precio a número para la validación y el guardado
+      const numericPrice = Number(formData.price);
+      if (isNaN(numericPrice) || numericPrice <= 0) {
+        throw new Error("El precio debe ser un número mayor a cero");
       }
 
       const productData = {
         ...formData,
+        price: numericPrice, // Asegurar que el precio se guarde como número
         updatedAt: serverTimestamp(),
       };
       
@@ -284,7 +303,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
         
         const docRef = await addDoc(collection(db, "products"), productData);
         console.log("Producto creado con ID:", docRef.id);
-        onSave({ ...formData, id: docRef.id });
+        onSave({ ...formData, id: docRef.id, price: numericPrice });
       } else {
         // Actualización
         const productId = productData.id;
@@ -292,7 +311,7 @@ export default function ProductForm({ product, onSave, onCancel }) {
         
         await updateDoc(doc(db, "products", productId), productData);
         console.log("Producto actualizado con ID:", productId);
-        onSave({ ...formData });
+        onSave({ ...formData, price: numericPrice });
       }
     } catch (error) {
       console.error("Error al guardar el producto:", error);
@@ -302,26 +321,34 @@ export default function ProductForm({ product, onSave, onCancel }) {
     }
   };
 
+  // Función para obtener el símbolo de la moneda
+  const getCurrencySymbol = (currency) => {
+    return currency === "USD" ? "US$" : "$";
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 border rounded-lg p-6">
+    <form onSubmit={handleSubmit} className="space-y-4 border rounded-lg p-6">
       <h2 className="text-xl font-bold text-[#0F1A3D] mb-4">
         {product ? "Editar Producto" : "Nuevo Producto"}
       </h2>
 
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="model">Modelo *</Label>
-          <Input 
-            id="model" 
-            name="model" 
-            value={formData.model} 
-            onChange={handleChange} 
-            required 
-            disabled={isLoading}
-          />
-        </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        {/* Primera columna */}
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="model">Modelo *</Label>
+            <Input 
+              id="model" 
+              name="model" 
+              value={formData.model}
+              onChange={handleChange}
+              required 
+              disabled={isLoading}
+              placeholder="Ingrese el modelo"
+              className="w-full"
+            />
+          </div>
 
-        <div className="grid grid-cols-2 gap-4">
           <div>
             <Label htmlFor="year">Año *</Label>
             <Input
@@ -334,159 +361,189 @@ export default function ProductForm({ product, onSave, onCancel }) {
               onChange={handleNumberChange}
               required
               disabled={isLoading}
+              className="w-full"
             />
           </div>
 
           <div>
+            <Label htmlFor="category">Categoría *</Label>
+            <Select 
+              value={formData.category} 
+              onValueChange={(value) => handleSelectChange("category", value)}
+              disabled={isLoading}
+            >
+              <SelectTrigger id="category" className="w-full">
+                <SelectValue placeholder="Seleccionar categoría" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="automotor">Automotor</SelectItem>
+                <SelectItem value="nautica">Náutica</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div>
+            <Label>Estado</Label>
+            <div className="flex items-center gap-2 mt-2">
+              <Switch 
+                checked={formData.sold} 
+                onCheckedChange={(checked) => handleSwitchChange("sold", checked)}
+                disabled={isLoading}
+              />
+              <span>{formData.sold ? "Vendido" : "Disponible"}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Segunda columna */}
+        <div className="space-y-4">
+          {/* Sección de Precio con selección de moneda */}
+          <div>
             <Label htmlFor="price">Precio *</Label>
+            <div className="flex gap-2">
+            <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+              <span className="text-gray-500">{getCurrencySymbol(formData.currency)}</span>
+            </div>
             <Input
               id="price"
               name="price"
-              type="number"
-              min="0"
-              step="1000"
+              type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               value={formData.price}
               onChange={handleNumberChange}
               required
               disabled={isLoading}
+              className={`${formData.currency === "USD" ? "pl-12" : "pl-8"} w-full`}
+              placeholder="Ingrese el precio"
             />
           </div>
-        </div>
+              <Select 
+                value={formData.currency} 
+                onValueChange={(value) => handleSelectChange("currency", value)}
+                disabled={isLoading}
+              >
+                <SelectTrigger id="currency" className="w-24">
+                  <SelectValue placeholder="Moneda" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="ARS">ARS</SelectItem>
+                  <SelectItem value="USD">USD</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
 
-        <div>
-          <Label htmlFor="category">Categoría *</Label>
-          <Select 
-            value={formData.category} 
-            onValueChange={(value) => handleSelectChange("category", value)}
-            disabled={isLoading}
-          >
-            <SelectTrigger id="category">
-              <SelectValue placeholder="Seleccionar categoría" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="automotor">Automotor</SelectItem>
-              <SelectItem value="nautica">Náutica</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor="description">Descripción *</Label>
-          <Textarea
-            id="description"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            rows={4}
-            required
-            disabled={isLoading}
-          />
-        </div>
-
-        <div>
-          <Label>Estado</Label>
-          <div className="flex items-center gap-2 mt-2">
-            <Switch 
-              checked={formData.sold} 
-              onCheckedChange={(checked) => handleSwitchChange("sold", checked)}
+          <div>
+            <Label htmlFor="description">Descripción *</Label>
+            <Textarea
+              id="description"
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              rows={5}
+              required
               disabled={isLoading}
+              placeholder="Ingrese una descripción detallada del producto"
+              className="w-full"
             />
-            <span>{formData.sold ? "Vendido" : "Disponible"}</span>
           </div>
         </div>
+      </div>
 
-        <div>
-          <Label>Imágenes {formData.images.length > 0 && `(${formData.images.length}/5)`}</Label>
-          <div
-            className={`mt-2 border-2 border-dashed rounded-lg p-6 text-center ${
-              dragActive ? "border-primary bg-primary/5" : "border-gray-300"
-            } ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
-            onDragEnter={handleDrag}
-            onDragOver={handleDrag}
-            onDragLeave={handleDrag}
-            onDrop={handleDrop}
+      {/* Sección de imágenes (ocupa todo el ancho) */}
+      <div className="mt-4">
+        <Label>Imágenes {formData.images.length > 0 && `(${formData.images.length}/5)`}</Label>
+        <div
+          className={`mt-2 border-2 border-dashed rounded-lg p-6 text-center ${
+            dragActive ? "border-primary bg-primary/5" : "border-gray-300"
+          } ${isLoading ? "opacity-70 cursor-not-allowed" : ""}`}
+          onDragEnter={handleDrag}
+          onDragOver={handleDrag}
+          onDragLeave={handleDrag}
+          onDrop={handleDrop}
+        >
+          <Upload className="h-10 w-10 text-gray-400 mx-auto mb-2" />
+          <p className="text-sm text-gray-600 mb-2">
+            Arrastra y suelta imágenes aquí (máx. 5), o
+          </p>
+          <Input 
+            id="images" 
+            type="file" 
+            accept="image/*" 
+            multiple 
+            className="hidden" 
+            onChange={handleFileInput} 
+            disabled={isLoading || formData.images.length >= 5}
+          />
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={() => document.getElementById("images").click()}
+            disabled={isLoading || formData.images.length >= 5}
           >
-            <Upload className="h-10 w-10 text-gray-400 mx-auto mb-2" />
-            <p className="text-sm text-gray-600 mb-2">
-              Arrastra y suelta imágenes aquí (máx. 5), o
-            </p>
-            <Input 
-              id="images" 
-              type="file" 
-              accept="image/*" 
-              multiple 
-              className="hidden" 
-              onChange={handleFileInput} 
-              disabled={isLoading || formData.images.length >= 5}
-            />
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => document.getElementById("images").click()}
-              disabled={isLoading || formData.images.length >= 5}
-            >
-              Seleccionar archivos
-            </Button>
-            
-            {isLoading && (
-              <div className="mt-2">
-                <p className="text-sm text-blue-500">
-                  Procesando imagen {currentFileIndex} de {totalFiles}...
-                </p>
-                <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
-                  <div 
-                    className="bg-blue-600 h-2.5 rounded-full" 
-                    style={{ width: `${uploadProgress}%` }}
-                  ></div>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">{Math.round(uploadProgress)}%</p>
-              </div>
-            )}
-            
-            {uploadError && (
-              <p className="mt-2 text-sm text-red-500">{uploadError}</p>
-            )}
-            
-            {formData.images.length >= 5 && (
-              <p className="mt-2 text-sm text-yellow-600">
-                Has alcanzado el límite de 5 imágenes
+            Seleccionar archivos
+          </Button>
+          
+          {isLoading && (
+            <div className="mt-2">
+              <p className="text-sm text-blue-500">
+                Procesando imagen {currentFileIndex} de {totalFiles}...
               </p>
-            )}
-          </div>
-
-          {formData.images.length > 0 && (
-            <div className="mt-4 grid grid-cols-3 gap-2">
-              {formData.images.map((image, index) => (
-                <div key={index} className="relative group">
-                  <img
-                    src={image}
-                    alt={`Imagen ${index + 1} del producto`}
-                    className="h-20 w-full object-cover rounded-md"
-                    onError={(e) => {
-                      e.target.src = "/placeholder.svg";
-                    }}
-                  />
-                  <button
-                    type="button"
-                    className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => removeImage(index)}
-                    disabled={isLoading}
-                    aria-label="Eliminar imagen"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
+              <div className="w-full bg-gray-200 rounded-full h-2.5 mt-2">
+                <div 
+                  className="bg-blue-600 h-2.5 rounded-full" 
+                  style={{ width: `${uploadProgress}%` }}
+                ></div>
+              </div>
+              <p className="text-xs text-gray-500 mt-1">{Math.round(uploadProgress)}%</p>
             </div>
           )}
+          
+          {uploadError && (
+            <p className="mt-2 text-sm text-red-500">{uploadError}</p>
+          )}
+          
+          {formData.images.length >= 5 && (
+            <p className="mt-2 text-sm text-yellow-600">
+              Has alcanzado el límite de 5 imágenes
+            </p>
+          )}
         </div>
+
+        {formData.images.length > 0 && (
+          <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+            {formData.images.map((image, index) => (
+              <div key={index} className="relative group">
+                <img
+                  src={image}
+                  alt={`Imagen ${index + 1} del producto`}
+                  className="h-20 w-full object-cover rounded-md"
+                  onError={(e) => {
+                    e.target.src = "/placeholder.svg";
+                  }}
+                />
+                <button
+                  type="button"
+                  className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                  onClick={() => removeImage(index)}
+                  disabled={isLoading}
+                  aria-label="Eliminar imagen"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {uploadError && (
         <div className="text-red-500 text-sm">{uploadError}</div>
       )}
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 pt-2">
         <Button 
           type="button" 
           variant="outline" 
