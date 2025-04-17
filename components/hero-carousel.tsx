@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button"
 const slides = [
   {
     id: 1,
-    image: "/fondo1.jpg", // Reemplaza con el nombre real de tu primera imagen
+    image: "/fondo1.JPG", // Reemplaza con el nombre real de tu primera imagen
     title: "Publique Aqui su Embarcacion",
     subtitle: "La mejor selección de embarcaciones",
   },
