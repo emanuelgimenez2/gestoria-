@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { doc, setDoc, getDoc, collection, addDoc, getDocs, serverTimestamp } from "firebase/firestore"
-import { db, app } from "@/lib/firebase"
+import { db, app } from "../../lib/firebase"
 
 const storage = getStorage(app)
 

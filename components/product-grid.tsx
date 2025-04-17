@@ -6,6 +6,20 @@ import { ChevronLeft, ChevronRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 
+// Función para obtener el símbolo de la moneda
+const getCurrencySymbol = (currency) => {
+  switch (currency?.toLowerCase()) {
+    case 'usd':
+      return 'USD';
+    case 'ars':
+    case 'ARS':
+      return '$';
+   
+    default:
+      return '$'; // Símbolo por defecto si no se especifica moneda o no se reconoce
+  }
+}
+
 export default function ProductGrid({ products }) {
   const [selectedProduct, setSelectedProduct] = useState(null)
 
@@ -25,6 +39,7 @@ export default function ProductGrid({ products }) {
 
 function ProductCard({ product, onViewDetails }) {
   const [currentImage, setCurrentImage] = useState(0)
+  const currencySymbol = getCurrencySymbol(product.currency)
 
   const nextImage = (e) => {
     e.stopPropagation()
@@ -83,7 +98,9 @@ function ProductCard({ product, onViewDetails }) {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mt-2 sm:mt-3">
           <div>
             <p className="text-xs sm:text-sm text-[#6B7280]">Año: {product.year}</p>
-            <p className="text-[#0F1A3D] font-bold text-sm sm:text-lg mt-1">${product.price.toLocaleString()}</p>
+            <p className="text-[#0F1A3D] font-bold text-sm sm:text-lg mt-1">
+  {currencySymbol} {product.price.toLocaleString()}
+</p>
           </div>
           <Button size="sm" onClick={onViewDetails} className="mt-2 sm:mt-0 text-xs sm:text-sm px-2 sm:px-4 py-1 w-full sm:w-auto">
             Ver detalles
@@ -96,6 +113,7 @@ function ProductCard({ product, onViewDetails }) {
 
 function ProductDetailsModal({ product, onClose }) {
   const [currentImage, setCurrentImage] = useState(0)
+  const currencySymbol = getCurrencySymbol(product.currency)
 
   const nextImage = () => {
     setCurrentImage((prev) => (prev === product.images.length - 1 ? 0 : prev + 1))
@@ -110,7 +128,7 @@ function ProductDetailsModal({ product, onClose }) {
     // Cambia este número por el número de WhatsApp real de tu gestoría
     const phoneNumber = "+5493442472412"; 
     // Crea un mensaje con información del producto
-    const message = `Hola, estoy interesado en el ${product.model} (${product.year}) que vi en su sitio web. Precio: $${product.price.toLocaleString()}. ¿Podría darme más información?`;
+    const message = `Hola, estoy interesado en el ${product.model} (${product.year}) que vi en su sitio web. Precio: ${currencySymbol}${product.price.toLocaleString()}. ¿Podría darme más información?`;
     
     // Codifica el mensaje para URL
     const encodedMessage = encodeURIComponent(message);
@@ -191,10 +209,20 @@ function ProductDetailsModal({ product, onClose }) {
                   {product.sold ? "Vendido" : "Disponible"}
                 </span>
               </div>
+              {product.currency && (
+                <div className="flex justify-between">
+                  <span className="text-sm sm:text-base text-[#6B7280]">Moneda:</span>
+                  <span className="text-sm sm:text-base font-medium">
+                    {product.currency.toUpperCase()}
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="mt-6 sm:mt-8">
-              <p className="text-xl sm:text-3xl font-bold text-[#0F1A3D]">${product.price.toLocaleString()}</p>
+            <p className="text-xl sm:text-3xl font-bold text-[#0F1A3D]">
+            {currencySymbol} {product.price.toLocaleString()}
+          </p>
 
               <div className="mt-4 sm:mt-6 flex gap-2 sm:gap-3">
                 <Button 
